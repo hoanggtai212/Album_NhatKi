@@ -244,7 +244,8 @@ let typed = false;
 let isFlipping = false;
 let isSpamming = false;
 let spamTimeout = null;
-const SPAM_GAP = 200; // 200ms không click nữa thì coi như ngừng spam
+const FLIP_DURATION = 1000;
+const SPAM_GAP = FLIP_DURATION + 50;
 let currentPageIndex = 0;
 
 function flipForward() {
@@ -406,6 +407,7 @@ document.querySelectorAll('.submit-btn').forEach(btn => {
     checkPass();
   });
 });
+
 
 
 
