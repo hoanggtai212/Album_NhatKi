@@ -242,41 +242,34 @@ function typewriterEffect(text, element) {
 let currentTopZ = 200;
 let typed = false;
 let isFlipping = false;
-let isSpamming = false;
-let spamTimeout = null;
 const FLIP_DURATION = 1000;
-const SPAM_GAP = FLIP_DURATION + 50;
 let currentPageIndex = 0;
+let lastSpamTime = 0;
+const SPAM_WINDOW = 900; // nhỏ hơn 1000ms để bắt spam tay
 
-function flipForward() {
+const flipForward = () => {
 
   if (isFlipping) return;
-
-  const page = pages[currentPageIndex];
-  if (!page) return;
 
   if (!page.classList.contains('flipped')) {
 
     isFlipping = true;
 
-    // 🔥 check trang gần cuối để chạy typewriter
-    if (currentPageIndex === pages.length - 2 && !typed) {
-
+    if (page === pages[pages.length - 2] && !typed) {
       const endText = document.getElementById('ending-text');
-
       const content = `A iu 3 thứ trên thế giới này : 
-Mặt trời (the Sun) ☀️, 
-Mặt trăg (the Moon) 🌕,
-Và em (the Exception) ❤️. 
-Mặt trời là ...
-Ánh ság của ban mai 🌅,
-Mặt trăg là ...
-Vẻ đẹp của màn đêm 🌌,
-Còn e là 🤔 ... 
-Là đệ cụa toi 😎
-Ý nhầm, còn e là 🤔 ... 
-Là đìu ngọt ngào nhứt của a 😘
-{ Hết }`;
+        Mặt trời (the Sun) ☀️, 
+        Mặt trăg (the Moon)🌕,
+        Và em (the Exception) ❤️. 
+        Mặt trời là ...
+        Ánh ság của ban mai 🌅,
+        Mặt trăg là ...
+        Vẻ đẹp của màn đêm 🌌,
+        Còn e là 🤔 ... 
+        Là đệ cụa toi 😎
+        Ý nhầm, còn e là 🤔 ... 
+        Là đìu ngọt ngào nhứt của a 😘
+        { Hết }`;
 
       endText.innerHTML = "";
       typewriterEffect(content, endText);
@@ -292,7 +285,10 @@ Là đìu ngọt ngào nhứt của a 😘
     setTimeout(() => {
 
       isFlipping = false;
-      currentPageIndex++; // 🔥 sang trang tiếp
+
+      // 🔥 KHÔNG queue
+      // 🔥 KHÔNG pending
+      // Chỉ kiểm tra còn spam hay không
 
       if (isSpamming) {
         flipForward();
@@ -300,15 +296,11 @@ Là đìu ngọt ngào nhứt của a 😘
 
     }, 1000);
   }
-}
+};
 
-function flipBackward() {
+const flipBackward = () => {
 
   if (isFlipping) return;
-  if (currentPageIndex <= 0) return;
-
-  currentPageIndex--;
-  const page = pages[currentPageIndex];
 
   if (page.classList.contains('flipped')) {
 
@@ -324,7 +316,8 @@ function flipBackward() {
       isFlipping = false;
     }, 1000);
   }
-}
+};
+
 
 pages.forEach((page) => {
   let startX = 0;
@@ -407,6 +400,7 @@ document.querySelectorAll('.submit-btn').forEach(btn => {
     checkPass();
   });
 });
+
 
 
 
