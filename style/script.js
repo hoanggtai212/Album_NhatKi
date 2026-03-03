@@ -245,36 +245,37 @@ let isFlipping = false;
 let isSpamming = false;
 let spamTimeout = null;
 const SPAM_GAP = 200; // 200ms không click nữa thì coi như ngừng spam
+let currentPageIndex = 0;
 
-
-pages.forEach((page) => {
-  let startX = 0;
-  const front = page.querySelector('.front');
-  const back = page.querySelector('.back');
-
-const flipForward = () => {
+function flipForward() {
 
   if (isFlipping) return;
+
+  const page = pages[currentPageIndex];
+  if (!page) return;
 
   if (!page.classList.contains('flipped')) {
 
     isFlipping = true;
 
-    if (page === pages[pages.length - 2] && !typed) {
+    // 🔥 check trang gần cuối để chạy typewriter
+    if (currentPageIndex === pages.length - 2 && !typed) {
+
       const endText = document.getElementById('ending-text');
+
       const content = `A iu 3 thứ trên thế giới này : 
-        Mặt trời (the Sun) ☀️, 
-        Mặt trăg (the Moon)🌕,
-        Và em (the Exception) ❤️. 
-        Mặt trời là ...
-        Ánh ság của ban mai 🌅,
-        Mặt trăg là ...
-        Vẻ đẹp của màn đêm 🌌,
-        Còn e là 🤔 ... 
-        Là đệ cụa toi 😎
-        Ý nhầm, còn e là 🤔 ... 
-        Là đìu ngọt ngào nhứt của a 😘
-        { Hết }`;
+Mặt trời (the Sun) ☀️, 
+Mặt trăg (the Moon) 🌕,
+Và em (the Exception) ❤️. 
+Mặt trời là ...
+Ánh ság của ban mai 🌅,
+Mặt trăg là ...
+Vẻ đẹp của màn đêm 🌌,
+Còn e là 🤔 ... 
+Là đệ cụa toi 😎
+Ý nhầm, còn e là 🤔 ... 
+Là đìu ngọt ngào nhứt của a 😘
+{ Hết }`;
 
       endText.innerHTML = "";
       typewriterEffect(content, endText);
@@ -290,10 +291,7 @@ const flipForward = () => {
     setTimeout(() => {
 
       isFlipping = false;
-
-      // 🔥 KHÔNG queue
-      // 🔥 KHÔNG pending
-      // Chỉ kiểm tra còn spam hay không
+      currentPageIndex++; // 🔥 sang trang tiếp
 
       if (isSpamming) {
         flipForward();
@@ -301,11 +299,15 @@ const flipForward = () => {
 
     }, 1000);
   }
-};
+}
 
-const flipBackward = () => {
+function flipBackward() {
 
   if (isFlipping) return;
+  if (currentPageIndex <= 0) return;
+
+  currentPageIndex--;
+  const page = pages[currentPageIndex];
 
   if (page.classList.contains('flipped')) {
 
@@ -321,7 +323,12 @@ const flipBackward = () => {
       isFlipping = false;
     }, 1000);
   }
-};
+}
+
+pages.forEach((page) => {
+  let startX = 0;
+  const front = page.querySelector('.front');
+  const back = page.querySelector('.back');
 
   front.addEventListener('click', () => {
 
@@ -399,6 +406,7 @@ document.querySelectorAll('.submit-btn').forEach(btn => {
     checkPass();
   });
 });
+
 
 
 
